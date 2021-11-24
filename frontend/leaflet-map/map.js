@@ -1,5 +1,26 @@
-var map = L.map('map').setView([37.349167, -121.938056], 16);
 
+var DefaultLocation = [37.349167, -121.938056]; // SCU GPS
+
+// We want to start the app with current location
+var map = L.map('map').locate({setView: true, maxZoom: 16});
+
+// Allocate components needed for start up
+var marker = L.marker(DefaultLocation).addTo(map);
+var info = L.control();
+
+// We will try to do an update on current location first
+// Note: if the we can not get current location, we will use default
+map.on('locationfound', function onLocationFound(e) {
+  var radius = e.accuracy;
+  DefaultLocation = e.latlng;
+
+  L.circle(e.latlng, radius).addTo(map);
+  marker.setLatLng(DefaultLocation);
+  var today = new Date();
+  info.update({value: today.getDay(), fix: DefaultLocation});
+});
+
+// Loading map tile
 L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: 'Map data &copy; OpenStreetMap contributors',
   maxZoom: 18
@@ -35,7 +56,7 @@ daySelector.onAdd = function (map) {
   '<option value="4">Thursday</option>'  +
   '<option value="5">Friday</option>'    +
   '<option value="6">Saturday</option>'  +
-  '<option value="7">Sunday</option>'    +
+  '<option value="0">Sunday</option>'    +
   '</select><br>';
 
   return this._div;
@@ -49,8 +70,6 @@ daySelector.addTo(map);
 
 ///////////////////////////////////////////////////
 // Custom Info Control Displaying Stats
-var info = L.control();
-
 info.onAdd = function (map) {
   this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
   this.update();
@@ -69,9 +88,9 @@ info.update = function (props) {
     this._div.innerHTML += 'Click a location';
   else
   {
-    var dow = ["MON", "TUE", "WED", "THR", "FRI", "SAT", "SUN"]; 
+    var dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; 
 
-    this._div.innerHTML += '<b>' + dow[props.value-1] + '(' + props.value +') traffic stats</b> @ ' 
+    this._div.innerHTML += '<b>' + dow[props.value] + ' ' + props.value +' traffic stats</b> @ ' 
       + props.fix.lat.toFixed(3) + ' | ' + props.fix.lng.toFixed(3);
 
     // <<<<<< TODO <<<<<<<
@@ -90,7 +109,7 @@ info.update = function (props) {
 info.addTo(map);
 
 ///////////////////////////////////////////////////
-// Legends
+// Adding a colored legend
 var legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (map) {
@@ -113,16 +132,10 @@ legend.addTo(map);
 
 ///////////////////////////////////////////////////
 // Adding Click-handler on map
-var popup = L.popup();
+map.on('click', function onMapClickMarker(e) {
 
-function onMapClick(e) {
-  popup
-  .setLatLng(e.latlng)
-  .setContent("" + e.latlng.lat + "<br>" + e.latlng.lng)
-  .openOn(map);
+  marker.setLatLng(e.latlng);
 
   var dow = document.getElementById("dayOfWeek").value;
   info.update({value: dow, fix: e.latlng});
-}
-
-map.on('click', onMapClick);
+});
