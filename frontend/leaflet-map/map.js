@@ -1,5 +1,6 @@
 
-var DefaultLocation = [37.349167, -121.938056]; // SCU GPS
+var DefaultLocation = [37.349167, -121.938056]; // SCU Location
+var DefaultAPI = "http://localhost:8080/mappapp?";
 
 // We want to start the app with current location
 var map = L.map('map').locate({setView: true, maxZoom: 16});
@@ -15,7 +16,9 @@ map.on('locationfound', function onLocationFound(e) {
   DefaultLocation = e.latlng;
 
   L.circle(e.latlng, radius).addTo(map);
+
   marker.setLatLng(DefaultLocation);
+
   var today = new Date();
   info.update({value: today.getDay(), fix: DefaultLocation});
 });
@@ -30,16 +33,11 @@ L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Utility to return needed colors for a range
 function getColor(d) {
   return d > 500  ? '#ff0000' :
-         d > 200  ? '#ff4000' :
-         d > 100  ? '#ff8000' :
-         d > 50   ? '#ffbf00' :
-         d > 20   ? '#ffff00' :
+         d > 300  ? '#ff8000' :
+         d > 200  ? '#ffbf00' :
+         d > 50   ? '#ffff00' :
          d > 10   ? '#bfff00' :
                     '#80ff00';
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
 }
 
 ///////////////////////////////////////////////////
@@ -61,10 +59,6 @@ daySelector.onAdd = function (map) {
 
   return this._div;
 };
-
-daySelector.onRemove = function(map) {
-  // L.DomEvent.off();
-}
 
 daySelector.addTo(map);
 
@@ -90,12 +84,28 @@ info.update = function (props) {
   {
     var dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; 
 
-    this._div.innerHTML += '<b>' + dow[props.value] + ' ' + props.value +' traffic stats</b> @ ' 
-      + props.fix.lat.toFixed(3) + ' | ' + props.fix.lng.toFixed(3);
+    this._div.innerHTML += `<b>${dow[props.value]} traffic stats</b> @ ${props.fix.lat.toFixed(3)} | ${props.fix.lng.toFixed(3)}`;
 
-    // <<<<<< TODO <<<<<<<
     // Call BE-API to get {morning:mValue, afternoon:aValue, evening:eValue}
-    var resp = {morning:getRandomInt(500), afternoon:getRandomInt(500), evening:getRandomInt(500)};
+    var resp = {morning:undefined, afternoon:undefined, evening:undefined};
+    var apiQuery = `dow=${props.value}&lat=${props.fix.lat}&lng=${props.fix.lng}`;
+    fetch(DefaultAPI + apiQuery)
+      .then(response => response.json())
+      .then(json => {
+        if (!json.morning) 
+        {
+          alert (`API KEY: "morning" undefined ${json}`);
+        }
+        else
+        {
+          resp.morning = json.morning;
+          resp.afternoon = json.afternoon;
+          resp.evening = json.evening;
+        }
+      })
+      .catch(function(error) {
+        alert(`GET Request to ${DefaultAPI}${apiQuery} failed`, error)
+    });
 
     // Updating table
     this._div.innerHTML += '<table style="width:100%">' +
@@ -115,7 +125,7 @@ var legend = L.control({position: 'bottomright'});
 legend.onAdd = function (map) {
 
   var div = L.DomUtil.create('div', 'info legend'),
-      grades = [0, 10, 20, 50, 100, 200, 500],
+      grades = [0, 10, 50, 200, 300, 500],
       labels = [];
 
   // loop through our density intervals and generate a label with a colored square for each interval
