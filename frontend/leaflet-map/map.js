@@ -45,7 +45,7 @@ function getColor(d) {
 var daySelector = L.control();
 
 daySelector.onAdd = function (map) {
-  this._div = L.DomUtil.create('div', 'dow');
+  this._div = L.DomUtil.create('div', 'info dow');
   this._div.innerHTML = '<label for="dow">Day of Week: </label>' +
   '<select id="dayOfWeek">' +
   '<option value="1" selected="selected">Monday</option>' +
@@ -57,6 +57,9 @@ daySelector.onAdd = function (map) {
   '<option value="0">Sunday</option>'    +
   '</select><br>';
 
+  // Stop letting a click on this control to go thru onto the map
+  L.DomEvent.on(this._div, 'click', L.DomEvent.stopPropagation);
+
   return this._div;
 };
 
@@ -65,9 +68,13 @@ daySelector.addTo(map);
 ///////////////////////////////////////////////////
 // Custom Info Control Displaying Stats
 info.onAdd = function (map) {
-  this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-  this.update();
-  // L.DomEvent.on();
+  this._div = L.DomUtil.create('div', 'info stats'); // create a div with a class "info"
+
+  // Stop letting a click on this control to go thru onto the map
+  L.DomEvent.on(this._div, 'click', L.DomEvent.stopPropagation);
+
+  // Trigger the first update and initalise the stats panel
+  this.update();  
   return this._div;
 };
 
@@ -114,7 +121,7 @@ info.update = function (props) {
       '<tr><td>Evening</td>  <td style="background-color:' + getColor(resp.evening) +   '">' + resp.evening +'</td></tr>' +
       '</table>';
   }
-};
+}
 
 info.addTo(map);
 
@@ -125,8 +132,7 @@ var legend = L.control({position: 'bottomright'});
 legend.onAdd = function (map) {
 
   var div = L.DomUtil.create('div', 'info legend'),
-      grades = [0, 10, 50, 200, 300, 500],
-      labels = [];
+      grades = [0, 10, 50, 200, 300, 500];
 
   // loop through our density intervals and generate a label with a colored square for each interval
   for (var i = 0; i < grades.length; i++) {
