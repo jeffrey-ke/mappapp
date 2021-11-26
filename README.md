@@ -1,6 +1,6 @@
 # mappapp (V.1)
 
-## Overview
+## Overview (V2)
 
 The purpose of this web application is to provide a lay-of-the-land for the user of a local road-network.
 
@@ -19,7 +19,7 @@ The purpose of this web application is to provide a lay-of-the-land for the user
 
 ### Front End
 
-- Using the [leaflet](https://leafletjs.com) open-source map builder to capture mouse events and output global coordinates, ie longitude and lattitude. 
+- Using the [leaflet](https://leafletjs.com) open-source map builder to capture mouse events and output global coordinates, ie longitude and lattitude.
 - We will use [React.js](https://reactjs.org) as our UI framework.
 
 ### Back End
