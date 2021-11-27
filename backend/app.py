@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+import random
+
 import json
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+
 @app.route('/')
 def home():
     return "This is an API for traffic data"
@@ -22,5 +27,8 @@ def api():
 
     #evening will be 6pm
 
-    result = {"morning": 5, "afternoon": 222, "evening": 12}
+    result = {"morning": random.randint(0,550), "afternoon": random.randint(0,550), "evening": random.randint(0,550)}
     return jsonify(result)
+
+if __name__ == '__main__':
+   app.run(debug = True)
