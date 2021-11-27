@@ -29,3 +29,6 @@ def api():
 
     result = {"morning": random.randint(0,550), "afternoon": random.randint(0,550), "evening": random.randint(0,550)}
     return jsonify(result)
+
+if __name__ == '__main__':
+   app.run(debug = True)
