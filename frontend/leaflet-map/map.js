@@ -1,6 +1,6 @@
 
 var DefaultLocation = [37.349167, -121.938056]; // SCU Location
-var DefaultAPI = "http://localhost:5000/mappapp?";
+var DefaultAPI = "http://127.0.0.1:5000/mappapp?";
 
 // We want to start the app with current location
 var map = L.map('map').locate({setView: true, maxZoom: 16});
@@ -93,12 +93,12 @@ info.update = function (props) {
 
     this._div.innerHTML += `<b>${dow[props.value]} traffic stats</b> @ ${props.fix.lat.toFixed(3)} | ${props.fix.lng.toFixed(3)}`;
 
-    // Call BE-API to get {morning:mValue, afternoon:aValue, evening:eValue}
-    var resp = {morning:undefined, afternoon:undefined, evening:undefined};
     var apiQuery = `dow=${props.value}&lat=${props.fix.lat}&lng=${props.fix.lng}`;
     fetch(DefaultAPI + apiQuery)
       .then(response => response.json())
       .then(json => {
+        // Call BE-API to get {morning:mValue, afternoon:aValue, evening:eValue}
+        var resp = {morning:undefined, afternoon:undefined, evening:undefined};
         if (!json.morning) 
         {
           alert (`API KEY: "morning" undefined ${json}`);
@@ -109,17 +109,17 @@ info.update = function (props) {
           resp.afternoon = json.afternoon;
           resp.evening = json.evening;
         }
+        // Updating table
+        this._div.innerHTML += '<table style="width:100%">' +
+        '<tr><td>Morning</td>  <td style="background-color:' + getColor(resp.morning) +   '">' + resp.morning +'</td></tr>' +
+        '<tr><td>Afternoon</td><td style="background-color:' + getColor(resp.afternoon) + '">' + resp.afternoon +'</td></tr>' +
+        '<tr><td>Evening</td>  <td style="background-color:' + getColor(resp.evening) +   '">' + resp.evening +'</td></tr>' +
+        '</table>';
       })
       .catch(function(error) {
         alert(`GET Request to ${DefaultAPI}${apiQuery} failed`, error)
     });
 
-    // Updating table
-    this._div.innerHTML += '<table style="width:100%">' +
-      '<tr><td>Morning</td>  <td style="background-color:' + getColor(resp.morning) +   '">' + resp.morning +'</td></tr>' +
-      '<tr><td>Afternoon</td><td style="background-color:' + getColor(resp.afternoon) + '">' + resp.afternoon +'</td></tr>' +
-      '<tr><td>Evening</td>  <td style="background-color:' + getColor(resp.evening) +   '">' + resp.evening +'</td></tr>' +
-      '</table>';
   }
 }
 
