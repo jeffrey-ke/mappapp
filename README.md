@@ -20,11 +20,25 @@ The purpose of this web application is to provide a lay-of-the-land for the user
 ### Front End
 
 - Using the [leaflet](https://leafletjs.com) open-source map builder to capture mouse events and output global coordinates, ie longitude and lattitude.
+  - Good intro: https://learning.oreilly.com/videos/creating-custom-web/9781771374217/
 
 
 ### Back End
 
 - We will use [Python Flask](https://flask.palletsprojects.com/en/2.0.x/) for our web framework.
+  - Good tutorial: https://pythonbasics.org/what-is-flask-python/
+
+~~~zsh
+# Be sure python3-venv is installed
+> cd mappapp
+> python3 -m venv venv
+> source venv/bin/activate
+> pip install flask flask-cors
+...
+> flask run
+~~~
+
+
 - We will use [Inrix](https://inrix.com)'s API to access live and predicted traffic data on queried global coordinates.
 
 ## Future
