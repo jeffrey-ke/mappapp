@@ -20,9 +20,18 @@ The purpose of this web application is to provide a lay-of-the-land for the user
 ### Front End
 
 - Using the [leaflet](https://leafletjs.com) open-source map builder to capture mouse events and output global coordinates, ie longitude and lattitude.
-- We will use [React.js](https://reactjs.org) as our UI framework.
+
 
 ### Back End
 
 - We will use [Python Flask](https://flask.palletsprojects.com/en/2.0.x/) for our web framework.
 - We will use [Inrix](https://inrix.com)'s API to access live and predicted traffic data on queried global coordinates.
+
+## Future
+
+- Use [React.js](https://reactjs.org) as our UI framework.
+- Adding routing capabiltiy from [ORS](https://openrouteservice.org/dev/#/api-docs) FE or BE. May be adding way to selecting best route avoiding traffic.
+- Explore icons from mapbox [MAKI](https://labs.mapbox.com/maki-icons/) also:
+  - Temaki: <https://github.com/ideditor/temaki>
+  - Font Awesome: <https://fontawesome.com/>
+  - The Noun Project: <https://thenounproject.com/>
