@@ -1,6 +1,6 @@
 
 var DefaultLocation = [37.349167, -121.938056]; // SCU Location
-var DefaultAPI = "http://localhost:8080/mappapp?";
+var DefaultAPI = "http://localhost:5000/mappapp?";
 
 // We want to start the app with current location
 var map = L.map('map').locate({setView: true, maxZoom: 16});
