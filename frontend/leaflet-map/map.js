@@ -84,15 +84,13 @@ info.onRemove = function(map) {
 
 // method that we will use to update the info based on map information passed in
 info.update = function (props) {
-  this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
   if (!props)
+  {
+    this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
     this._div.innerHTML += 'Click a location';
+  }
   else
   {
-    var dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; 
-
-    this._div.innerHTML += `<b>${dow[props.value]} traffic stats</b> @ ${props.fix.lat.toFixed(3)} | ${props.fix.lng.toFixed(3)}`;
-
     var apiQuery = `dow=${props.value}&lat=${props.fix.lat}&lng=${props.fix.lng}`;
     fetch(DefaultAPI + apiQuery)
       .then(response => response.json())
@@ -110,6 +108,9 @@ info.update = function (props) {
           resp.evening = json.evening;
         }
         // Updating table
+        var dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; 
+        this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
+        this._div.innerHTML += `<b>${dow[props.value]} traffic stats</b> @ ${props.fix.lat.toFixed(3)} | ${props.fix.lng.toFixed(3)}`;
         this._div.innerHTML += '<table style="width:100%">' +
         '<tr><td>Morning</td>  <td style="background-color:' + getColor(resp.morning) +   '">' + resp.morning +'</td></tr>' +
         '<tr><td>Afternoon</td><td style="background-color:' + getColor(resp.afternoon) + '">' + resp.afternoon +'</td></tr>' +
