@@ -87,40 +87,38 @@ info.update = function (props) {
   if (!props)
   {
     this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
-    this._div.innerHTML += 'Click a location';
+    this._div.innerHTML += 'Waiting for location...';
   }
   else
   {
+    var dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; 
+    this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
+    this._div.innerHTML += `Waiting ${dow[props.value]} traffic stats</b> (${props.fix.lat.toFixed(2)} | ${props.fix.lng.toFixed(2)})`;
     var apiQuery = `dow=${props.value}&lat=${props.fix.lat}&lng=${props.fix.lng}`;
     fetch(DefaultAPI + apiQuery)
-      .then(response => response.json())
-      .then(json => {
-        // Call BE-API to get {morning:mValue, afternoon:aValue, evening:eValue}
-        var resp = {morning:undefined, afternoon:undefined, evening:undefined};
-        if (!json.morning) 
-        {
-          alert (`API KEY: "morning" undefined ${json}`);
-        }
-        else
-        {
-          resp.morning = json.morning;
-          resp.afternoon = json.afternoon;
-          resp.evening = json.evening;
-        }
-        // Updating table
-        var dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; 
-        this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
-        this._div.innerHTML += `<b>${dow[props.value]} traffic stats</b> @ ${props.fix.lat.toFixed(3)} | ${props.fix.lng.toFixed(3)}`;
-        this._div.innerHTML += '<table style="width:100%">' +
-        '<tr><td>Morning</td>  <td style="background-color:' + getColor(resp.morning) +   '">' + resp.morning +'</td></tr>' +
-        '<tr><td>Afternoon</td><td style="background-color:' + getColor(resp.afternoon) + '">' + resp.afternoon +'</td></tr>' +
-        '<tr><td>Evening</td>  <td style="background-color:' + getColor(resp.evening) +   '">' + resp.evening +'</td></tr>' +
-        '</table>';
-      })
-      .catch(function(error) {
-        alert(`GET Request to ${DefaultAPI}${apiQuery} failed`, error)
+    .then(response => response.json())
+    .then(json => {
+      // Call BE-API to get {morning:mValue, afternoon:aValue, evening:eValue}
+      var resp = {morning:undefined, afternoon:undefined, evening:undefined};
+      if (!json.morning) 
+      {
+        alert (`API KEY: "morning" undefined ${json}`);
+      }
+      else
+      {
+        resp.morning = json.morning;
+        resp.afternoon = json.afternoon;
+        resp.evening = json.evening;
+      }
+      // Updating table
+      this._div.innerHTML = '<h4>Road Traffic Statistics</h4>';
+      this._div.innerHTML += `<b>${dow[props.value]} traffic stats</b> @ ${props.fix.lat.toFixed(3)} | ${props.fix.lng.toFixed(3)}`;
+      this._div.innerHTML += '<table style="width:100%">' +
+      '<tr><td>Morning</td>  <td style="background-color:' + getColor(resp.morning) +   '">' + resp.morning +'</td></tr>' +
+      '<tr><td>Afternoon</td><td style="background-color:' + getColor(resp.afternoon) + '">' + resp.afternoon +'</td></tr>' +
+      '<tr><td>Evening</td>  <td style="background-color:' + getColor(resp.evening) +   '">' + resp.evening +'</td></tr>' +
+      '</table>';
     });
-
   }
 }
 
@@ -141,6 +139,8 @@ legend.onAdd = function (map) {
           '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
           grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
   }
+  // Stop letting a click on this control to go thru onto the map
+  L.DomEvent.on(div, 'click', L.DomEvent.stopPropagation);
 
   return div;
 };
