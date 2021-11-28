@@ -24,8 +24,8 @@ def api():
         return "Error: Not all fields given"
 
     r = requests.get('https://api.tomtom.com/traffic/services/4/flowSegmentData/relative0/10/json?point=' + str(lat) + '%2C' + str(lng) + '&key=' + key).json()
-    if r['httpStatusCode'] != 200:
-        return jsonify({"morning": 0, "afternoon": 0, "evening": 0})
+    if 'httpStatusCode' in r.keys() and r['httpStatusCode'] != 200:
+        return jsonify({"morning": 1, "afternoon": 1, "evening": 1})
     speed = r["flowSegmentData"]["currentSpeed"]
     result = {"morning": speed, "afternoon": speed, "evening": speed}
     return jsonify(result)
